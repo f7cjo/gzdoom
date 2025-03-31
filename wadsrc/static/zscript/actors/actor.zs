@@ -73,6 +73,25 @@ class ViewPosition native
 	native readonly int Flags;
 }
 
+class Behavior native play abstract version("4.15.1")
+{
+	native readonly Actor Owner;
+	native readonly LevelLocals Level;
+
+	virtual void Initialize() {}
+	virtual void Reinitialize() {}
+	virtual void TransferredOwner(Actor oldOwner) {}
+	virtual void Tick() {}
+}
+
+class BehaviorIterator native abstract final version("4.15.1")
+{
+	native static BehaviorIterator CreateFrom(Actor mobj, class<Behavior> type = null);
+	native static BehaviorIterator Create(class<Behavior> type = null, class<Actor> ownerType = null);
+
+	native Behavior Next();
+	native void Reinit();
+}
 
 class Actor : Thinker native
 {
@@ -502,6 +521,13 @@ class Actor : Thinker native
 		return sin(fb * (180./32)) * 8;
 	}
 
+	native version("4.15.1") clearscope Behavior FindBehavior(class<Behavior> type) const;
+	native version("4.15.1") bool RemoveBehavior(class<Behavior> type);
+	native version("4.15.1") Behavior AddBehavior(class<Behavior> type);
+	native version("4.15.1") void TickBehaviors();
+	native version("4.15.1") void ClearBehaviors(class<Behavior> type = null);
+	native version("4.15.1") void MoveBehaviors(Actor from);
+
 	native clearscope bool isFrozen() const;
 	virtual native void BeginPlay();
 	virtual native void Activate(Actor activator);
@@ -760,6 +786,7 @@ class Actor : Thinker native
 	native bool CheckPosition(Vector2 pos, bool actorsonly = false, FCheckPosition tm = null);
 	native bool TestMobjLocation();
 	native static Actor Spawn(class<Actor> type, vector3 pos = (0,0,0), int replace = NO_REPLACE);
+	native static clearscope Actor SpawnClientside(class<Actor> type, vector3 pos = (0,0,0), int replace = NO_REPLACE);
 	native Actor SpawnMissile(Actor dest, class<Actor> type, Actor owner = null);
 	native Actor SpawnMissileXYZ(Vector3 pos, Actor dest, Class<Actor> type, bool checkspawn = true, Actor owner = null);
 	native Actor SpawnMissileZ (double z, Actor dest, class<Actor> type);

@@ -853,6 +853,27 @@ DEFINE_ACTION_FUNCTION(_Wads, GetLumpFullName)
 	ACTION_RETURN_STRING(fileSystem.GetFileFullName(lump));
 }
 
+DEFINE_ACTION_FUNCTION(_Wads, GetLumpContainer)
+{
+	PARAM_PROLOGUE;
+	PARAM_INT(lump);
+	ACTION_RETURN_INT(fileSystem.GetFileContainer(lump));
+}
+
+DEFINE_ACTION_FUNCTION(_Wads, GetContainerName)
+{
+	PARAM_PROLOGUE;
+	PARAM_INT(lump);
+	ACTION_RETURN_STRING(fileSystem.GetResourceFileName(lump));
+}
+
+DEFINE_ACTION_FUNCTION(_Wads, GetLumpFullPath)
+{
+	PARAM_PROLOGUE;
+	PARAM_INT(lump);
+	ACTION_RETURN_STRING(fileSystem.GetFileFullPath(lump));
+}
+
 DEFINE_ACTION_FUNCTION(_Wads, GetLumpNamespace)
 {
 	PARAM_PROLOGUE;
@@ -899,6 +920,27 @@ DEFINE_ACTION_FUNCTION(_CVar, GetString)
 {
 	PARAM_SELF_STRUCT_PROLOGUE(FBaseCVar);
 	auto v = self->GetGenericRep(CVAR_String);
+	ACTION_RETURN_STRING(v.String);
+}
+
+DEFINE_ACTION_FUNCTION(_CVar, GetDefaultInt)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FBaseCVar);
+	auto v = self->GetGenericRepDefault(CVAR_Int);
+	ACTION_RETURN_INT(v.Int);
+}
+
+DEFINE_ACTION_FUNCTION(_CVar, GetDefaultFloat)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FBaseCVar);
+	auto v = self->GetGenericRepDefault(CVAR_Float);
+	ACTION_RETURN_FLOAT(v.Float);
+}
+
+DEFINE_ACTION_FUNCTION(_CVar, GetDefaultString)
+{
+	PARAM_SELF_STRUCT_PROLOGUE(FBaseCVar);
+	auto v = self->GetGenericRepDefault(CVAR_String);
 	ACTION_RETURN_STRING(v.String);
 }
 

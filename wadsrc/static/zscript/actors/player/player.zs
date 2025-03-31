@@ -18,6 +18,7 @@ class PlayerPawn : Actor
 	// 16 pixels of bob
 	const MAXBOB = 16.;
 	
+	int			BobTimer;	// Use a local timer for this so it can be predicted correctly.
 	int			crouchsprite;
 	int			MaxHealth;
 	int			BonusHealth;
@@ -633,7 +634,7 @@ class PlayerPawn : Actor
 		{
 			if (player.health > 0)
 			{
-				angle = Level.maptime / (120 * TICRATE / 35.) * 360.;
+				angle = BobTimer / (120 * TICRATE / 35.) * 360.;
 				bob = player.GetStillBob() * sin(angle);
 			}
 			else
@@ -643,7 +644,7 @@ class PlayerPawn : Actor
 		}
 		else
 		{
-			angle = Level.maptime / (ViewBobSpeed * TICRATE / 35.) * 360.;
+			angle = BobTimer / (ViewBobSpeed * TICRATE / 35.) * 360.;
 			bob = player.bob * sin(angle) * (waterlevel > 1 ? 0.25f : 0.5f);
 		}
 
@@ -1305,7 +1306,7 @@ class PlayerPawn : Actor
 		if (player.turnticks)
 		{
 			player.turnticks--;
-			Angle += (180. / TURN180_TICKS);
+			A_SetAngle(Angle + (180. / TURN180_TICKS), SPF_INTERPOLATE);
 		}
 		else
 		{
@@ -1667,12 +1668,9 @@ class PlayerPawn : Actor
 			PlayerFlags |= PF_VOODOO_ZOMBIE;
 		}
 		
+		++BobTimer;
 		CheckFOV();
 
-		if (player.inventorytics)
-		{
-			player.inventorytics--;
-		}
 		CheckCheats();
 
 		if (bJustAttacked)
@@ -2545,7 +2543,7 @@ class PlayerPawn : Actor
 		for (int i = 0; i < 2; i++)
 		{
 			// Bob the weapon based on movement speed. ([SP] And user's bob speed setting)
-			double angle = (BobSpeed * player.GetWBobSpeed() * 35 /	TICRATE*(Level.maptime - 1 + i)) * (360. / 8192.);
+			double angle = (BobSpeed * player.GetWBobSpeed() * 35 /	TICRATE*(BobTimer - 1 + i)) * (360. / 8192.);
 
 			// [RH] Smooth transitions between bobbing and not-bobbing frames.
 			// This also fixes the bug where you can "stick" a weapon off-center by
